@@ -27,7 +27,7 @@ def get_simd(folder="data"):
     #open the file
     simd_file = zip_file_object.open(simd_file_name)
     df_simd = pd.read_csv(simd_file)
-    df_simd.to_csv(os.path.join(folder,"data/simd_2020.csv")
+    df_simd.to_csv(os.path.join(folder,"simd_2020.csv"))
     return df_simd
 
 def geog_url(code):
@@ -53,7 +53,7 @@ def get_zones_wards(df_simd, folder="data"):
         i+=1
         print(i)
 
-    df_wards.to_csv(os.path.join(folder,,"wards.csv")
+    df_wards.to_csv(os.path.join(folder,"wards.csv"))
     return df_wards
 
 if __name__ == "__main__":
