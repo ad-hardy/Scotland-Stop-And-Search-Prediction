@@ -5,7 +5,11 @@ import urllib.request as urllib
 import zipfile
 import os
 
-
+def get_data(folder="data"):
+    df_stop_search = get_stop_search()
+    df_simd = get_simd()
+    df_wards = get_zones_wards(df_simd)
+    return df_stop_search, df_simd, df_wards
 def get_stop_search(folder="data"):
     url = "https://www.scotland.police.uk/spa-media/pssjskv1/1b-01-april-31-december-2020-csv.csv"
     r = requests.get(url)
@@ -58,11 +62,5 @@ def get_zones_wards(df_simd, folder="data"):
 
 if __name__ == "__main__":
 
-    df_stop_search = get_stop_search()
-    print(df_stop_search)
+    df_stop_search, df_simd, df_wards = get_data()
 
-    df_simd = get_simd()
-    print(df_simd)
-
-    df_wards = get_zones_wards(df_simd)
-    print(df_wards)
