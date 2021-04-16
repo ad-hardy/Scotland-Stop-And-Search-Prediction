@@ -11,7 +11,7 @@ def get_data(folder="data"):
     df_simd = get_simd()
     df_wards = get_zones_wards(df_simd)
     return df_stop_search, df_simd, df_wards
-
+    
 def get_stop_search(folder="data"):
     url = "https://www.scotland.police.uk/spa-media/pssjskv1/1b-01-april-31-december-2020-csv.csv"
     r = requests.get(url)
