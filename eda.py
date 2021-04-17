@@ -40,9 +40,26 @@ def plot_boxes(df, cols = 4, height=2000, width=1000, cols_to_exclude=None):
     return fig
 
 
+def plotQQ(df, cols=2, height=None, width=None):
 
-def plotQQ(df, cols):
-    for col in cols:
-        fig = sm.qqplot(df[col], fit=True, line='45')
-        plt.title(col)
-        plt.show()
+    rows = math.ceil(len(df.columns) / cols)
+
+    if height == None:
+        height = 7.5 * rows
+    if width == None:
+        width = 7.5 * cols
+
+    fig, axs = plt.subplots(nrows=rows, ncols=cols, figsize=(width,height))
+    axs = axs.flatten()
+    col_names = df.columns.to_list()
+
+    for i, col_name in enumerate(col_names):
+        sm.qqplot(data=df[col_name], fit=True, line='45', ax=axs[i])
+        axs[i].set_title(f"QQ Plot of {col_name}")
+
+    fig.show()
+
+if __name__ == "__main__":
+
+    df = pd.read_csv("data/simd_2020_ward.csv")
+    plotQQ(df[["CIF", "EMERG", "crime_count", "crime_count_log"]])
