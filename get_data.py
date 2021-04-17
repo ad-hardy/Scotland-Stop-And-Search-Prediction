@@ -67,4 +67,3 @@ def get_zones_wards(df_simd, folder="data", rate_limit=1/15):
 if __name__ == "__main__":
 
     df_stop_search, df_simd, df_wards = get_data()
-
