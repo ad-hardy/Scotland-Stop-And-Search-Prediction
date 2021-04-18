@@ -57,6 +57,12 @@ def get_zones_wards(df_simd, folder="data", rate_limit=1/15):
         ward_data = json.loads(r.text)[0]
         ward_name = ward_data["http://www.w3.org/2000/01/rdf-schema#label"][0]["@value"]
 
+
+        #two wards with same name, change these ones
+        if zone_code in [S01010105,S01010106,S01010107,S01010108,S01010109,S01010110,S01010111,S01010112,S01010113,S01010114,S01010115,S01010116,S01010117, S01010122
+]:
+            ward_name += "- Glasgow"
+
         df_wards = df_wards.append({"zone_code":zone_code, "zone_name":zone_name, "ward_code":ward_code, "ward_name":ward_name}, ignore_index=True)
         i+=1
         print(i)
