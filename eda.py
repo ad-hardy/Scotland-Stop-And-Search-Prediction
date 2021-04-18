@@ -58,8 +58,3 @@ def plotQQ(df, cols=2, height=None, width=None):
         axs[i].set_title(f"QQ Plot of {col_name}")
 
     fig.show()
-
-if __name__ == "__main__":
-
-    df = pd.read_csv("data/simd_2020_ward.csv")
-    plotQQ(df[["CIF", "EMERG", "crime_count", "crime_count_log"]])
