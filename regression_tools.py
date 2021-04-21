@@ -15,3 +15,11 @@ def get_feature_weights(columns:list, model):
 
     assert len(columns) == len(model.coef_.squeeze())
     return dict(zip(columns, model.coef_.squeeze()))
+
+
+def select_multi_cols(dfs:list, cols:list):
+    """drop the specified columns from the specified dataframes"""
+    for df in dfs:
+        df = df[cols]
+    
+    return dfs
