@@ -36,7 +36,7 @@ import plotly.graph_objects as go
 from sklearn.metrics import roc_curve
 from sklearn.metrics import roc_auc_score
 
-def calc_roc(model, data, labels, size=800):
+def calc_roc(model, data, labels, size=800, title="ROC Curve"):
     """Plots the receiver operating characteristics curve"""
 
     fpr, tpr, threshold = roc_curve(labels, model.predict_proba(data)[:,1])
@@ -55,7 +55,7 @@ def calc_roc(model, data, labels, size=800):
         height=height,
         xaxis_title="False Positive Rate (Sensitivty)",
         yaxis_title="True Positive Rate (1-Precision)",
-        title="ROC Curve",
+        title=title,
         yaxis_range=[0,1],
         xaxis_range=[0,1]
         )
@@ -93,3 +93,5 @@ def plot_confusion_matrix(conf_mat):
     plt.ylabel('Expected')
     plt.show()
 
+def list_onehot_columns(df, column_prefix):
+    return df.columns[df.columns.str.contains(f"{column_prefix}.*", regex=True)].to_list()
