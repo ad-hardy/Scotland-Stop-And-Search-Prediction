@@ -26,7 +26,7 @@ def list_onehot_columns(df, column_prefix):
 
 class BinaryLogisticClassifier():
 
-    def __init__(self, X_train, X_val, y_train, y_val, col_names, max_iter=100, n_jobs=1):
+    def __init__(self, X_train, X_val, y_train, y_val, col_names, max_iter=100, n_jobs=1, penalty="none"):
         self.X_train = X_train
         self.X_val = X_val
         self.y_train = y_train
@@ -34,7 +34,7 @@ class BinaryLogisticClassifier():
         self.col_names = col_names
 
         self.model = LogisticRegression(
-            penalty="none",
+            penalty=penalty,
             max_iter=max_iter,
             n_jobs=n_jobs
             )
@@ -60,19 +60,21 @@ class BinaryLogisticClassifier():
         self.plot_confusion_matrix()
         
         self.get_tpr_fpr()
-        print("Training:")
-        print("True positive rate (selectivity): {:3f}".format(self.tpr_train))
-        print("False positive rate (fall-out): {:3f}".format(self.fpr_train))
-        print("")
-        print("Validation:")
-        print("True positive rate (selectivity): {:3f}".format(self.tpr_train))
-        print("False positive rate (fall-out): {:3f}".format(self.fpr_train))
+
+        print("{:>12} | {:^5} | {:^5} | {:^5} | {:^5}".format("Data", "TPR", "FPR", "TNR", "FNR"))
+        print("{:>12} | {:.3f} | {:.3f} | {:.3f} | {:.3f}".format("Training", self.tpr_train, self.fpr_train, self.tnr_train, self.fnr_train))
+        print("{:>12} | {:.3f} | {:.3f} | {:.3f} | {:.3f}".format("Validation", self.tpr_val, self.fpr_val, self.tnr_val, self.fnr_val))
 
     def get_tpr_fpr(self):
         self.tpr_train = self.tp_train/(self.tp_train + self.fn_train)
         self.fpr_train = self.fp_train/(self.fp_train + self.tn_train)
+        self.tnr_train = self.tn_train/(self.fp_train + self.tn_train)
+        self.fnr_train  = self.fn_train/(self.fp_train + self.tn_train)
+
         self.tpr_val = self.tp_val/(self.tp_val + self.fn_val)
         self.fpr_val = self.fp_val/(self.fp_val + self.tn_val)
+        self.tnr_val = self.tn_val/(self.fp_val + self.tn_val)
+        self.fnr_val  = self.fn_val/(self.fp_val + self.tn_val)
 
     def get_accuracy(self):
         self.accuracy_train = self.model.score(self.X_train, self.y_train)
@@ -101,7 +103,7 @@ class BinaryLogisticClassifier():
         s = [['TN','FP'], ['FN', 'TP']]
         for i in range(2):
             for j in range(2):
-                plt.text(j-0.25,i, str(s[i][j])+" = "+str(cm[i][j]))
+                plt.text(j-0.25,i, f"{str(s[i][j])} = {str(cm[i][j])}")
         self.conf_mat_train_plt = plt
         self.conf_mat_train_plt.show()
 
@@ -120,7 +122,7 @@ class BinaryLogisticClassifier():
         s = [['TN','FP'], ['FN', 'TP']]
         for i in range(2):
             for j in range(2):
-                plt.text(j-0.25,i, str(s[i][j])+" = "+str(cm[i][j]))
+                plt.text(j-0.25,i, f"{str(s[i][j])} = {str(cm[i][j])}")
         self.conf_mat_val_plt = plt
         self.conf_mat_val_plt.show()
 
