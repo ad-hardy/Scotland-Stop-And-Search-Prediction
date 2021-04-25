@@ -58,3 +58,11 @@ def plotQQ(df, cols=2, height=None, width=None):
         axs[i].set_title(f"QQ Plot of {col_name}")
 
     fig.show()
+
+def merge_cat_features(df, columns_merge, column_new):
+    df[column_new] = df[columns_merge].sum(axis=1)
+    return df.drop(columns_merge, axis=1)
+
+def list_onehot_columns(df, column_prefix):
+    """returns a list of columns from a dataframe that begin wih the given column_prefix"""
+    return df.columns[df.columns.str.contains(f"{column_prefix}.*", regex=True)].to_list()

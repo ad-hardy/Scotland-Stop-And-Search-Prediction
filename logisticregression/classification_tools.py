@@ -4,6 +4,7 @@ from sklearn.metrics import roc_curve, confusion_matrix, roc_auc_score
 import numpy as np
 from matplotlib import pyplot as plt
 from sklearn.linear_model import LogisticRegression
+from operator import itemgetter
 
 def drop_multi_cols(dfs:list, cols:list):
     """drop the specified columns from the specified dataframes"""
@@ -46,35 +47,40 @@ class BinaryLogisticClassifier():
     def predict(self, threshold=0.5):
         self.y_train_pred = predict_with_threshold(self.model, self.X_train, threshold=threshold)
         self.y_val_pred = predict_with_threshold(self.model, self.X_val, threshold=threshold)
+        return self.y_train_pred, self.y_val_pred
 
-    def analyse(self, threshold=0.5):
+    def analyse(self, threshold=0.5, verbose=True, ROC=True,conf_matrix=False):
 
         self.get_accuracy()
-        print("Training accuracy: {:.3f}\nValidation accuracy:{:.3f}".format(self.accuracy_train, self.accuracy_val))
+        if verbose:
+            print("Training accuracy: {:.3f}\nValidation accuracy:{:.3f}".format(self.accuracy_train, self.accuracy_val))
 
-        self.plot_roc()
+        if ROC and verbose:
+            self.plot_roc()
 
         self.predict(threshold=threshold)
 
         self.get_confusion_matrix()
-        self.plot_confusion_matrix()
+        if verbose and conf_matrix:
+            self.plot_confusion_matrix()
         
         self.get_tpr_fpr()
 
-        print("{:>12} | {:^5} | {:^5} | {:^5} | {:^5}".format("Data", "TPR", "FPR", "TNR", "FNR"))
-        print("{:>12} | {:.3f} | {:.3f} | {:.3f} | {:.3f}".format("Training", self.tpr_train, self.fpr_train, self.tnr_train, self.fnr_train))
-        print("{:>12} | {:.3f} | {:.3f} | {:.3f} | {:.3f}".format("Validation", self.tpr_val, self.fpr_val, self.tnr_val, self.fnr_val))
+        if verbose and conf_matrix:
+            print("{:>12} | {:^5} | {:^5} | {:^5} | {:^5}".format("Data", "TPR", "FPR", "TNR", "FNR"))
+            print("{:>12} | {:.3f} | {:.3f} | {:.3f} | {:.3f}".format("Training", self.tpr_train, self.fpr_train, self.tnr_train, self.fnr_train))
+            print("{:>12} | {:.3f} | {:.3f} | {:.3f} | {:.3f}".format("Validation", self.tpr_val, self.fpr_val, self.tnr_val, self.fnr_val))
 
     def get_tpr_fpr(self):
         self.tpr_train = self.tp_train/(self.tp_train + self.fn_train)
         self.fpr_train = self.fp_train/(self.fp_train + self.tn_train)
         self.tnr_train = self.tn_train/(self.fp_train + self.tn_train)
-        self.fnr_train  = self.fn_train/(self.fp_train + self.tn_train)
+        self.fnr_train  = self.fn_train/(self.tp_train + self.fn_train)
 
         self.tpr_val = self.tp_val/(self.tp_val + self.fn_val)
         self.fpr_val = self.fp_val/(self.fp_val + self.tn_val)
         self.tnr_val = self.tn_val/(self.fp_val + self.tn_val)
-        self.fnr_val  = self.fn_val/(self.fp_val + self.tn_val)
+        self.fnr_val  = self.fn_val/(self.tp_val + self.fn_val)
 
     def get_accuracy(self):
         self.accuracy_train = self.model.score(self.X_train, self.y_train)
@@ -172,7 +178,7 @@ class BinaryLogisticClassifier():
 
         return self.auc_roc_train, self.auc_roc_val
 
-    def get_feature_weights(self, print_coef=True):
+    def get_feature_weights(self, print_coef=True, sort_absolute=True):
         """Get a dictionary of the features (key) and their weights (value) from a logistic regression, sorted by absolute value.
         
         Model should be an sklearn (fitted) logistic regression object
@@ -187,11 +193,16 @@ class BinaryLogisticClassifier():
 
         if print_coef:
 
-            #sort by absolute value
-            coefficients_sorted = [ (abs(v), v, k) for k,v in self.coefficients.items()]
-            coefficients_sorted.sort(reverse=True)
+            #get absolute values
+            coefficients_abs = [ (v, abs(v), k) for k,v in self.coefficients.items()]
+            sort_col = 0
+            if sort_absolute:
+                sort_col = 1
+ 
+            coefficients_sorted = sorted(coefficients_abs, key=itemgetter(sort_col), reverse=True)
 
             # print from largest to smallest
             print("Coefficents:")
-            for abs_val, val, key in coefficients_sorted:
+            for val, abs_val, key in coefficients_sorted:
                 print("{: .2e}: {}".format(val, key))
+
