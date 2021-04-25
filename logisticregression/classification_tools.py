@@ -27,12 +27,14 @@ def list_onehot_columns(df, column_prefix):
 
 class BinaryLogisticClassifier():
 
-    def __init__(self, X_train, X_val, y_train, y_val, col_names, max_iter=100, n_jobs=1, penalty="none"):
+    def __init__(self, X_train, X_val, y_train, y_val, col_names, max_iter=100, n_jobs=1, penalty="none", data_name_1="Training", data_name_2="Validation"):
         self.X_train = X_train
         self.X_val = X_val
         self.y_train = y_train
         self.y_val = y_val
         self.col_names = col_names
+        self.data_name_1 = data_name_1
+        self.data_name_2 = data_name_2
 
         self.model = LogisticRegression(
             penalty=penalty,
@@ -51,16 +53,16 @@ class BinaryLogisticClassifier():
 
     def analyse(self, threshold=0.5, verbose=True, ROC=True,conf_matrix=False):
 
+        self.predict(threshold=threshold)
+        self.get_confusion_matrix()
+
         self.get_accuracy()
         if verbose:
-            print("Training accuracy: {:.3f}\nValidation accuracy:{:.3f}".format(self.accuracy_train, self.accuracy_val))
+            print("{} accuracy: {:.3f}\n{} accuracy:{:.3f}".format(self.data_name_1, self.accuracy_train, self.data_name_2, self.accuracy_val))
 
         if ROC and verbose:
             self.plot_roc()
 
-        self.predict(threshold=threshold)
-
-        self.get_confusion_matrix()
         if verbose and conf_matrix:
             self.plot_confusion_matrix()
         
@@ -68,8 +70,8 @@ class BinaryLogisticClassifier():
 
         if verbose and conf_matrix:
             print("{:>12} | {:^5} | {:^5} | {:^5} | {:^5}".format("Data", "TPR", "FPR", "TNR", "FNR"))
-            print("{:>12} | {:.3f} | {:.3f} | {:.3f} | {:.3f}".format("Training", self.tpr_train, self.fpr_train, self.tnr_train, self.fnr_train))
-            print("{:>12} | {:.3f} | {:.3f} | {:.3f} | {:.3f}".format("Validation", self.tpr_val, self.fpr_val, self.tnr_val, self.fnr_val))
+            print("{:>12} | {:.3f} | {:.3f} | {:.3f} | {:.3f}".format(self.data_name_1, self.tpr_train, self.fpr_train, self.tnr_train, self.fnr_train))
+            print("{:>12} | {:.3f} | {:.3f} | {:.3f} | {:.3f}".format(self.data_name_2, self.tpr_val, self.fpr_val, self.tnr_val, self.fnr_val))
 
     def get_tpr_fpr(self):
         self.tpr_train = self.tp_train/(self.tp_train + self.fn_train)
@@ -83,8 +85,8 @@ class BinaryLogisticClassifier():
         self.fnr_val  = self.fn_val/(self.tp_val + self.fn_val)
 
     def get_accuracy(self):
-        self.accuracy_train = self.model.score(self.X_train, self.y_train)
-        self.accuracy_val = self.model.score(self.X_train, self.y_train)
+        self.accuracy_train = (self.tp_train + self.tn_train)/(self.y_train.count())
+        self.accuracy_val = (self.tp_val + self.tn_val)/(self.y_val.count())
 
     def get_confusion_matrix(self):
 
@@ -100,7 +102,7 @@ class BinaryLogisticClassifier():
         plt.clf()
         plt.imshow(cm, interpolation='nearest', cmap=plt.cm.Wistia)
         classNames = ['Negative','Positive']
-        plt.title('Confusion Matrix - Test Data')
+        plt.title(f'Confusion Matrix - {self.data_name_1}')
         plt.ylabel('Truth')
         plt.xlabel('Predicted')
         tick_marks = np.arange(len(classNames))
@@ -119,7 +121,7 @@ class BinaryLogisticClassifier():
         plt.clf()
         plt.imshow(cm, interpolation='nearest', cmap=plt.cm.Wistia)
         classNames = ['Negative','Positive']
-        plt.title('Confusion Matrix - Validation Data')
+        plt.title(f'Confusion Matrix - {self.data_name_2}')
         plt.ylabel('Truth')
         plt.xlabel('Predicted')
         tick_marks = np.arange(len(classNames))
@@ -157,15 +159,15 @@ class BinaryLogisticClassifier():
                 )
             )
 
-        self.roc_curve.add_trace(go.Scatter(x=fpr_train, y=tpr_train, name="Training", mode="lines"))
-        self.roc_curve.add_trace(go.Scatter(x=fpr_val, y=tpr_val, name="Validation", mode="lines"))
+        self.roc_curve.add_trace(go.Scatter(x=fpr_train, y=tpr_train, name=self.data_name_1, mode="lines"))
+        self.roc_curve.add_trace(go.Scatter(x=fpr_val, y=tpr_val, name=self.data_name_2, mode="lines"))
         self.roc_curve.add_trace(go.Scatter(x=[0,1], y =[0,1], name="Basline", mode="lines", line=dict(color = 'rgba(50,50,50,0.2)')))
 
         self.get_auc_roc()
 
         self.roc_curve.add_annotation(
             x=0.2,y=0.9,
-            text="AUC ROC score:</br></br>   Training: {:.3f}</br>   Validation: {:.3f}".format(self.auc_roc_train, self.auc_roc_val),
+            text="AUC ROC score:</br></br>   {}: {:.3f}</br>   {}: {:.3f}".format(self.data_name_1, self.auc_roc_train, self.data_name_2, self.auc_roc_val),
             align="left",
             showarrow=False,
             )
