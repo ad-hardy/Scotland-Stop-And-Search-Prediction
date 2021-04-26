@@ -22,4 +22,4 @@ It will also scrape some additional data on data zones and electoral wards from 
 
 # Data Cleaning
 
-Two Jupyter notebooks in [2 Cleaning](./2 Cleaning)
+Two Jupyter notebooks in [2 Cleaning](https://github.com/adhardy/Scotland-Stop-And-Search-Prediction/tree/main/2%20Cleaning)
