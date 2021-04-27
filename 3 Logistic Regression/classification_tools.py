@@ -161,7 +161,7 @@ class BinaryLogisticClassifier():
 
         self.roc_curve.add_trace(go.Scatter(x=fpr_train, y=tpr_train, name=self.data_name_1, mode="lines"))
         self.roc_curve.add_trace(go.Scatter(x=fpr_val, y=tpr_val, name=self.data_name_2, mode="lines"))
-        self.roc_curve.add_trace(go.Scatter(x=[0,1], y =[0,1], name="Basline", mode="lines", line=dict(color = 'rgba(50,50,50,0.2)')))
+        self.roc_curve.add_trace(go.Scatter(x=[0,1], y =[0,1], name="Baseline", mode="lines", line=dict(color = 'rgba(50,50,50,0.2)')))
 
         self.get_auc_roc()
 
