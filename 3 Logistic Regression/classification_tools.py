@@ -207,4 +207,3 @@ class BinaryLogisticClassifier():
             print("Coefficents:")
             for val, abs_val, key in coefficients_sorted:
                 print("{: .2e}: {}".format(val, key))
-
