@@ -27,7 +27,9 @@ def list_onehot_columns(df, column_prefix):
 
 class BinaryLogisticClassifier():
 
-    def __init__(self, X_train, X_val, y_train, y_val, col_names, max_iter=100, n_jobs=1, penalty="none", data_name_1="Training", data_name_2="Validation"):
+    def __init__(self, X_train, X_val, y_train, y_val, col_names, max_iter=100, n_jobs=1, penalty="none", data_name_1="Training", data_name_2="Validation",
+        C=1, class_weight=None, solver="lbfgs"):
+
         self.X_train = X_train
         self.X_val = X_val
         self.y_train = y_train
@@ -39,7 +41,10 @@ class BinaryLogisticClassifier():
         self.model = LogisticRegression(
             penalty=penalty,
             max_iter=max_iter,
-            n_jobs=n_jobs
+            n_jobs=n_jobs,
+            class_weight=class_weight,
+            C=C,
+            solver=solver
             )
         self.fit()
 
