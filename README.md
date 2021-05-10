@@ -35,3 +35,13 @@ The most thoroughly explored classifier is an SKLearn logistic regressor in [log
 ## Decision Trees
 
 A short exploration a decision tree model is contained in [decision_tree.ipynb](https://github.com/adhardy/Scotland-Stop-And-Search-Prediction/blob/main/4%20Other%20Models/decision_tree.ipynb).
+
+# Key Findings
+
+Logistic Regression produced the model with the highest performance with an ROC AUC score of 0.63 on the test data. It struggled to make correct predictions with a ture positive rate of 0.68 and true negative rate of 0.50.
+
+The main problem was a lack of signal amongst the available features, with only a handful having any predictive power:
+
+- Age, gender and ethnicity had only the smallest amount of predictive ower (a suprising result in itself).
+- The deprivation factors in an area from the deprivation index (simd.scot; includes education, crime rate, housing...) also have no predictive power.
+- The biggest predictors are where you were stopped (which police subdivision) and the reason you were stopped (with suspicion of drugs and warrants being the biggest predictors).
