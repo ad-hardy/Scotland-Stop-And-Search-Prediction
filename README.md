@@ -34,4 +34,4 @@ The most thoroughly explored classifier is an SKLearn logistic regressor in [log
 
 ## Decision Trees
 
-A short exploration a decision tree model is contained in [decision_tree.ipynb](https://github.com/adhardy/Scotland-Stop-And-Search-Prediction/blob/main/4%20Other%20Modles/decision_tree.ipynb).
+A short exploration a decision tree model is contained in [decision_tree.ipynb](https://github.com/adhardy/Scotland-Stop-And-Search-Prediction/blob/main/4%20Other%20Models/decision_tree.ipynb).
